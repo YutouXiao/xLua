@@ -50,7 +50,7 @@ namespace Consolation
         /// <summary>
         /// Snap string
         /// </summary>
-        public string textToSnap = "";
+        public string textToReport = "";
 
         /// <summary>
         /// Calculate string
@@ -115,7 +115,7 @@ namespace Consolation
         /// </summary>
         /// <returns></returns>
         [CSharpCallLua]
-        public delegate string voidParam();
+        public delegate List<SnapMsg> voidParam();
 
         /// <summary>
         /// class to output lua memory message
@@ -135,12 +135,7 @@ namespace Consolation
         //Set Origin Actions
         private Action luaStart;
         private Action luaStop;
-        private Action luaUpdate;
-        private Action luaOnDestroy;
         private String2Paragram luaFilter;
-        private stringParam luaTakeSnap;
-        private String2Paragram luaCalculSnap;
-        private voidParam luaMemoryTotal;
         private stringParam luaReport;
 
         private LuaTable scriptEnv;
@@ -163,10 +158,8 @@ namespace Consolation
         const int margin = 20;
 
         //Original GUIContent
-        static readonly GUIContent TextContent = new GUIContent("Text", "Text Input.");
         static readonly GUIContent filterContent = new GUIContent("Filter", "Filter the content.");
-        static readonly GUIContent takeSnap = new GUIContent("TakeSnap", "Take the snapshot content.");
-        static readonly GUIContent CalculSnap = new GUIContent("CalculSnap", "Calculate the snapshots.");
+        static readonly GUIContent report = new GUIContent("Report", "Report the properties .");
         static readonly GUIContent collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
         static readonly GUIContent clearLabel = new GUIContent("Clear", "Clear the content of the log.");
 
@@ -195,12 +188,7 @@ namespace Consolation
             Action luaAwake = scriptEnv.Get<Action>("awake");
             scriptEnv.Get("start", out luaStart);
             scriptEnv.Get("stop", out luaStop);
-            scriptEnv.Get("update", out luaUpdate);
-            scriptEnv.Get("ondestroy", out luaOnDestroy);
             scriptEnv.Get("luafilter", out luaFilter);
-            scriptEnv.Get("takesnap", out luaTakeSnap);
-            scriptEnv.Get("calculation", out luaCalculSnap);
-            scriptEnv.Get("total", out luaMemoryTotal);
             scriptEnv.Get("report", out luaReport);
 
             if (luaAwake != null)
@@ -236,10 +224,6 @@ namespace Consolation
 
         void Update()
         {
-            if (luaUpdate != null)
-            {
-                luaUpdate();
-            }
             if (Time.time - LuaBehaviour.lastGCTime > GCInterval)
             {
                 luaEnv.Tick();
@@ -263,15 +247,7 @@ namespace Consolation
         /// </summary>
         void OnDestroy()
         {
-            if (luaOnDestroy != null)
-            {
-                luaOnDestroy();
-            }
-            luaOnDestroy = null;
-            luaUpdate = null;
-            luaStart = null;
-            scriptEnv.Dispose();
-            injections = null;
+
         }
 
         /// <summary>
@@ -345,50 +321,33 @@ namespace Consolation
             textToFilter = GUILayout.TextField(textToFilter, 50);
             if (GUILayout.Button(filterContent))
             {
-                //snapMsgs = luaFilter(textToSnap, textToFilter);
-                //if (collapse)
-                //{
-                //    DistinctList();
-                //}
-            }
-            if (GUILayout.Button(clearLabel))
-            {
-                //preMesList.Clear();
-                //snapMsgs.Clear();
+                snapMsgs = luaFilter(textToReport, textToFilter);
+                if (collapse)
+                {
+                    DistinctList();
+                }
             }
             collapse = GUILayout.Toggle(collapse, collapseLabel, GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("the snap name", GUILayout.Width(90));
-            textToSnap = GUILayout.TextField(textToSnap, 30);
-            if (GUILayout.Button(takeSnap))
+            textToReport = GUILayout.TextField(textToReport, 50);
+            if (GUILayout.Button(report))
             {
                 luaStart();
-                snapMsgs = luaReport(textToSnap);
+                snapMsgs = luaReport(textToReport);
                 luaStop();
                 //AddTitle();
-                //snapMsgs = luaTakeSnap(textToSnap);
-                //if (collapse)
-                //{
-                //    DistinctList();
-                //}
+                //snapMsgs = luaTakeSnap(textToReport);
+                if (collapse)
+                {
+                    DistinctList();
+                }
             }
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("snap1", GUILayout.Width(40));
-            textToCal1 = GUILayout.TextField(textToCal1, 30);
-            GUILayout.Label("snap2", GUILayout.Width(40));
-            textToCal2 = GUILayout.TextField(textToCal2, 30);
-            if (GUILayout.Button(CalculSnap))
+            if (GUILayout.Button(clearLabel))
             {
                 //preMesList.Clear();
-                //snapMsgs = luaCalculSnap(textToCal1, textToCal2);
-                //if (collapse)
-                //{
-                //    DistinctList();
-                //}
+                snapMsgs.Clear();
             }
             GUILayout.EndHorizontal();
         }
@@ -461,29 +420,6 @@ namespace Consolation
                     GUILayout.Label(snapMsgs[i].relative, GUILayout.Width(w5));
                     GUILayout.Label(snapMsgs[i].called, GUILayout.Width(w6));
                     GUILayout.EndHorizontal();
-                }
-            }
-        }
-
-        /// <summary>
-        /// add first two lines message
-        /// </summary>
-        void AddTitle()
-        {
-            if (preMesList != null)
-            {
-                if (preMesList.Count == 0)
-                {
-                    preMesList.Add(new PreMes("snapshot key: ", textToSnap));
-                    preMesList.Add(new PreMes("total memory: ", luaMemoryTotal()));
-                }
-                if (preMesList.Count == 2)
-                {
-                    preMesList[0].title = "snapshot key: ";
-                    preMesList[0].message = textToSnap;
-
-                    preMesList[1].title = "total memory: ";
-                    preMesList[1].message = luaMemoryTotal();
                 }
             }
         }
