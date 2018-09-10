@@ -1,0 +1,17 @@
+function report()
+    local profiler = require 'pref.profiler'
+    profiler.start()
+	print("Hello World! ")
+	print(profiler.report())
+	profiler.stop()
+end
+
+function stop()
+    local profiler = require 'pref.profiler'
+    profiler.stop()
+end
+
+function start()
+    local profiler = require 'pref.profiler'
+    profiler.start()
+end
