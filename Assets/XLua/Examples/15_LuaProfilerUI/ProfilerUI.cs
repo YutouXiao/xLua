@@ -46,23 +46,10 @@ namespace Consolation
         /// </summary>
         public float shakeAcceleration = 3f;
 
-        /// <summary>
-        /// Whether to only keep a certain number of logs.
-        ///
-        /// Setting this can be helpful if memory usage is a concern.
-        /// </summary>
-        public bool restrictLogCount = false;
-
-        /// <summary>
-        /// Number of logs to keep before removing old ones.
-        /// </summary>
-        public int maxLogs = 1000;
-
         #endregion
 
         Vector2 scrollPosition;
         bool visible;
-        bool collapse;
 
         /// <summary>
         /// class to output lua memory message
@@ -97,7 +84,6 @@ namespace Consolation
         //Original GUIContent
         static readonly GUIContent filterContent = new GUIContent("Filter", "Filter the content.");
         static readonly GUIContent report = new GUIContent("Report", "Report the properties .");
-        static readonly GUIContent collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
         static readonly GUIContent clearLabel = new GUIContent("Clear", "Clear the content of the log.");
 
         readonly Rect titleBarRect = new Rect(0, 0, 10000, 20);
@@ -194,7 +180,6 @@ namespace Consolation
             {
                 FilterContent();
             }
-            collapse = GUILayout.Toggle(collapse, collapseLabel, GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
@@ -214,7 +199,7 @@ namespace Consolation
         void HandleLog(string message, string stackTrace, LogType type)
         {
             string[] logList = message.Split('|');
-            if (logList[1].Contains("Report Message"))
+            if (logList.Length > 1 && logList[1].Contains("Report Message"))
             {
                 for (int i = 2; i < logList.Length; i++)
                 {
@@ -240,8 +225,8 @@ namespace Consolation
             if (snapMsgs != null && snapMsgs.Count > 0)
             {
                 float win = windowRect.width * 0.95f;
-                //{0,15}:{1,10}:{2,15}:{3,20}:{4,20}:{5,20}
-                float w1 = win * 0.15f; var w2 = win * 0.1f; var w3 = win * 0.15f; var w4 = win * 0.2f; var w5 = win * 0.2f; var w6 = win * 0.2f;
+                //{0,15}:{1,20}:{2,15}:{3,15}:{4,15}:{5,15}
+                float w1 = win * 0.15f; var w2 = win * 0.2f; var w3 = win * 0.15f; var w4 = win * 0.15f; var w5 = win * 0.15f; var w6 = win * 0.15f;
                 for (int i = 0; i < snapMsgs.Count; i++)
                 {
                     GUILayout.BeginHorizontal();
