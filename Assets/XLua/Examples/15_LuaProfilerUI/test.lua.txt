@@ -1,5 +1,5 @@
 function report()
-    local profiler = require 'pref.profiler'
+    local profiler = require 'perf.profiler'
     profiler.start()
 	print("Hello World! ")
 	print(profiler.report())
@@ -7,11 +7,11 @@ function report()
 end
 
 function stop()
-    local profiler = require 'pref.profiler'
+    local profiler = require 'perf.profiler'
     profiler.stop()
 end
 
 function start()
-    local profiler = require 'pref.profiler'
+    local profiler = require 'perf.profiler'
     profiler.start()
 end
