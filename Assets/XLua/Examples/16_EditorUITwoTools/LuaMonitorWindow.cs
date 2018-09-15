@@ -21,11 +21,12 @@ namespace LuaMonitor
         const int c_toolbarHeight = 40;
 
         //LuaSnapshotWindow ssWindow;
-        LuaProfilerWin pfWindow;
+        private LuaProfilerWin pfWindow;
+        private LuaSnapshotView ssWindow;
 
         private void OnEnable()
         {
-            //ssWindow = new LuaSnapshotWindow(this);
+            ssWindow = new LuaSnapshotView(this);
             pfWindow = new LuaProfilerWin(this);
         }
 
@@ -46,7 +47,7 @@ namespace LuaMonitor
             }
             else if (p_mode == 1)
             {
-                //ssWindow.DrawWindow(winRect);
+                ssWindow.DrawWindow(winRect);
             }
         }
     }
