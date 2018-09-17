@@ -22,7 +22,7 @@ namespace LuaMonitor
         static readonly GUIContent takeSnap = new GUIContent("TakeSnap", "Take the snapshot content.");
         static readonly GUIContent CalculSnap = new GUIContent("CalculSnap", "Calculate the snapshots.");
         static readonly GUIContent clearLabel = new GUIContent("Clear", "Clear the content of the log.");
-        private List<LuaSnapshotData> dataList;
+        private List<LuaSnapshotData> dataList = new List<LuaSnapshotData>();
         
 
         public class PreMes

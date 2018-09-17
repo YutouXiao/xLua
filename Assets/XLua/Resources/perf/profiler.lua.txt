@@ -103,7 +103,7 @@ local function report(sort_by)
     
     table.sort(report_list, sort_func or sort_funcs.TOTAL)
     
-    local output = header
+    local output = "|Report Message" .. header
     
     for i, rp in ipairs(report_list) do
         output = output .. rp.output

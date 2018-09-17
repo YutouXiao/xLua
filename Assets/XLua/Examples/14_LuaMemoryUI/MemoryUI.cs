@@ -129,7 +129,7 @@ namespace Consolation
             public string id;
             public string info;
         }
-        private List<SnapMsg> snapMsgs;
+        private List<SnapMsg> snapMsgs = new List<SnapMsg>();
 
         //Set Origin Actions
         private Action luaStart;
